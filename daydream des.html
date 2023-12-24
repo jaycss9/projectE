@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Description Generator</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="./node_modules/nes.css/css/nes.min.css">
+  <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Press Start 2P', sans-serif;
+      background-color: #f4f4f4; /* Light gray background */
+      color: #333; /* Dark gray text color */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px;
+      background-color: #fff; /* White background */
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    h2, h3 {
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #333; /* Dark gray text color */
+    }
+
+    label {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      display: block;
+      color: #555; /* Light gray text color */
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc; /* Light gray border */
+      border-radius: 4px;
+      margin-bottom: 20px;
+      background-color: #f8f8f8; /* Light gray background */
+      color: #333; /* Dark gray text color */
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #007BFF; /* Blue button color */
+      color: #fff; /* White text color */
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3; /* Slightly darker blue on hover */
+    }
+
+    .generated-description {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f8f8f8; /* Light gray background */
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .copy-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .copy-button {
+      background-color: #007BFF; /* Blue button color */
+      color: #fff; /* White text color */
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .copy-button:hover {
+      background-color: #0056b3; /* Slightly darker blue on hover */
+    }
+
+    .copy-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: #555; /* Light gray text color */
+    }
+  </style>
+
+  <script>
+    function copyText() {
+      const textarea = document.getElementById("generatedDescription");
+      textarea.select();
+      document.execCommand("copy");
+      document.getElementById("copyButton").innerText = "Copied!";
+    }
+
+    function replaceText() {
+      const a1 = document.getElementById("a1").value.trim();
+      const n = document.getElementById("n").value.trim();
+      const a2 = document.getElementById("a2").value.trim();
+      const s1 = document.getElementById("s1").value.trim();
+      const s2 = document.getElementById("s2").value.trim();
+      const l = document.getElementById("l").value.trim();
+
+      let description = `${a1.toLowerCase()} - ${n.toLowerCase()}`;
+      if (a2 !== "") {
+        description += ` ft. ${a2.toLowerCase()}`;
+      }
+      description += ' (Lyrics)';
+      description += ` \n\n⏬ Download / Stream: ${l}\n\n💖 Share the love everywhere: https://bit.ly/3TkLjHJ\n\nᯤ Spotify Playlist 🎧\n• Nostalgic Journey.. https://spoti.fi/3OdmPOp\n• Off My Face.. https://spoti.fi/3PtlXG1\n\n🔥 Follow ${a1}:\n${s1}\n`;
+
+      if (s2 !== "") {
+        description += `\n🔥 Follow ${a2}:\n${s2}\n`;
+      }
+
+      let hashtags = `#${n.toLowerCase().replace(/\s/g, "")} #${a1.toLowerCase().replace(/\s/g, "")}`;
+      if (a2 !== "") {
+        hashtags += `#${a2.toLowerCase().replace(/\s/g, "")}`;
+      }
+      description += '\n📱 Follow us:\nhttps://www.instagram.com/thedreamdiscovers/\n\nTags\n';
+      description += `#${n.toLowerCase().replace(/\s/g, "")} #${a1.toLowerCase().replace(/\s/g, "")} #daydream \n\n📠 Contact us at: daydcontact@gmail.com\n\n📷 Background image credits: \nUnsplash: http://unsplash.com \nPexels: http://pexels.com\n\n📥 Submit your music: https://daydream.portal.district.biz\n\n⚡indie, pop, Soul, Alternative `;
+      document.getElementById("generatedDescription").innerHTML = description;
+      document.getElementById("copyButton").innerText = "Copy";
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>YouTube Description Generator</h2>
+    <h3>DAYDREAM</h3>
+    <label for="a1">🎤 Artist 1:</label>
+    <input type="text" id="a1">
+    <label for="a2">🎤 Artist 2:</label>
+    <input type="text" id="a2">
+    <label for="n">Song Name:</label>
+    <input type="text" id="n">
+    <label for="s1">Social Media 1:</label>
+    <textarea id="s1" rows="4" cols="50"></textarea>
+    <label for="s2">Social Media 2:</label>
+    <textarea id="s2" rows="4" cols="50"></textarea>
+    <label for="l">Link For Streaming Music:</label>
+    <input type="text" id="l">
+    <br>
+    <button onclick="replaceText()">Generate Description</button>
+    <div class="generated-description">
+      <h3>Generated Description</h3>
+      <textarea id="generatedDescription" rows="30" cols="50"readonly></textarea>
+      <div class="copy-container">
+        <button id="copyButton" onclick="copyText()">Copy</button>
+        <span class="copy-text">(Click the button to copy the description)</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
