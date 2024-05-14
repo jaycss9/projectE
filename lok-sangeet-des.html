@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Description Generator</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap">
+
+  <style>
+    /* Dark theme styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #222;
+      color: #ddd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: #333;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+      color: #eee;
+    }
+
+    h2, h3 {
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    label {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      display: block;
+      color: #ddd;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      background-color: #444;
+      color: #eee;
+      border: 1px solid #666;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #f0545e;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #c83e4d;
+    }
+
+    .generated-description {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #444;
+      border-radius: 8px;
+      box-shadow: none;
+      color: #ddd;
+    }
+
+    .copy-container {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+      justify-content: space-between;
+    }
+
+    .copy-button {
+      background-color: #f0545e;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .copy-button:hover {
+      background-color: #c83e4d;
+    }
+
+    .copy-text {
+      font-size: 14px;
+      font-weight: normal;
+      color: #ddd;
+    }
+
+    #lyricsInput {
+      height: 150px;
+    }
+
+    img {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>YouTube Description Generator</h2>
+    <h3>LOK SANGEET</h3>
+    <label for="full">👇 Enter Full Title:</label>
+    <input type="text" id="full">
+    <label for="a1">🎤 Primary Artist:</label>
+    <input type="text" id="a1">
+    <label for="a2">🎤 Secondary Artist:</label>
+    <input type="text" id="a2">
+    <label for="n">Song Name:</label>
+    <input type="text" id="n">
+    <label for="s1">Social Media 1:</label>
+    <textarea id="s1" rows="4" cols="50"></textarea>
+    <label for="s2">Social Media 2:</label>
+    <textarea id="s2" rows="4" cols="50"></textarea>
+    <label for="l">Link For Streaming Music:</label>
+    <input type="text" id="l">
+    <label for="lyricsInput">Lyrics :</label>
+    <textarea id="lyricsInput" rows="8" cols="50"></textarea>
+    <label for="r">Related Artist/Extra Artist (Optional)</label>
+    <input type="text" id="r">
+    <br>
+    <button onclick="replaceText()">Generate Description</button>
+    <div class="generated-description">
+      <h3>Generated Description</h3>
+      <textarea id="generatedDescription" rows="20" readonly></textarea>
+      <div class="copy-container">
+        <button id="copyButton" onclick="copyText()">Copy</button>
+        <span class="copy-text">(Click the button to copy the description)</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript functions from the first part
+    function copyText() {
+      const textarea = document.getElementById("generatedDescription");
+      textarea.select();
+      document.execCommand("copy");
+      document.getElementById("copyButton").innerText = "Copied!";
+    }
+
+    function replaceText() {
+      const a1 = document.getElementById("a1").value.trim();
+      const n = document.getElementById("n").value.trim();
+      const a2 = document.getElementById("a2").value.trim();
+      const s1 = document.getElementById("s1").value.trim();
+      const s2 = document.getElementById("s2").value.trim();
+      const l = document.getElementById("l").value.trim();
+      const r = document.getElementById("r").value.trim();
+      const lyrics = document.getElementById("lyricsInput").value.trim();
+      const full = document.getElementById("full").value.trim();
+
+      let description = `👑 ${full}\n`;
+      description += `🔥 Help us reach 10,000 subscribers!\n`;
+      description += `🔔 Turn on notifications to stay updated with new uploads!\n\n`;
+      description += `🎧 Stream & Download: ${l}\n\n`;
+      description += `✨ Follow ${a1}:\n${s1}\n\n`;
+
+      if (s2 !== "") {
+        description += `✨ Follow ${a2}:
+${s2}
+
+`;
+      }
+      let hashtags = `#${n.toLowerCase().replace(/\s/g, "")} #${a1.toLowerCase().replace(/\s/g, "")}`;
+      if (a2 !== "") {
+        hashtags += `#${a2.toLowerCase().replace(/\s/g, "")}`;
+      }
+      description += '×=×=×=×=×';
+      description += '  ';
+            if(lyrics !== ""){
+                description += ` \n\nLyrics for "${a1} - ${n}"\n\n${lyrics}`;
+            }
+      //description += ` \n\nLyrics for "${n}"\n\n${lyrics}`;
+      description += '\n\n×=×=×=×=×';
+      description += `\n\n🏷️Tags\n#${n.toLowerCase().replace(/\s/g, "")} #${a1.toLowerCase().replace(/\s/g, "")} #loksangeet #hindi #${n.toLowerCase().replace(/\s/g, "")}lyrics`;
+      description += '\n\n📧 Contact/Submission: loksangeetwork@gmail.com ';
+      description += '\n📥 Submit your music: https://loksangeet.portal.district.biz/app/login';
+      description += `\n\n${a1}, `;
+            if(a2 !== ""){
+              description += `${a2}, `;
+            }
+            if(r !== ""){
+              description += `${r}, `;
+            }
+      description += `${a1} Latest, ${n} Lyrics, ${n} Lyrics Video`;
+      document.getElementById("generatedDescription").value = description;
+      document.getElementById("copyButton").innerText = "Copy";
+    }
+  </script>
+</body>
+</html>
