@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Gradient Mountain Image Generator</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background: #f0f0f0;
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        display: flex;
+        align-items: center;
+        text-align: center;
+      }
+      canvas {
+        display: block;
+        border: 2px solid #000;
+        margin-right: 20px;
+      }
+      .controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .button {
+        display: inline-block;
+        margin: 10px;
+        padding: 20px 40px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 1.2em;
+        transition: background-color 0.3s ease;
+      }
+      .button:hover {
+        background-color: #0056b3;
+      }
+      .slider-container {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+      }
+      .slider-container label {
+        font-size: 1.2em;
+        margin-right: 10px;
+      }
+      .slider-container input[type="range"] {
+        width: 300px;
+        margin-right: 10px;
+      }
+      .slider-container input[type="number"] {
+        width: 80px;
+        padding: 10px;
+        font-size: 1.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <canvas id="gradientCanvas" width="1920" height="1080"></canvas>
+      <div class="controls">
+        <div class="slider-container">
+          <label for="saturationSlider">Saturation:</label>
+          <input
+            type="range"
+            id="saturationSlider"
+            min="0"
+            max="3"
+            step="0.1"
+            value="1"
+          />
+          <input
+            type="number"
+            id="saturationValue"
+            min="0"
+            max="3"
+            step="0.1"
+            value="1"
+          />
+        </div>
+        <button id="generateGradientBtn" class="button">
+          Generate Gradient
+        </button>
+        <button id="generateMountainsBtn" class="button">
+          Generate Mountains
+        </button>
+        <a
+          href="#"
+          id="downloadLink"
+          class="button"
+          download="gradient_mountain.png"
+        >
+          Download
+        </a>
+      </div>
+    </div>
+    <script>
+      const gradients = [
+        ["#5a44f0", "#29aefc"],
+        ["#fcb80d", "#ed2d03"],
+        ["#e102ae", "#fc0229"],
+        ["#fe01ff", "#ff454b"],
+        ["#2555c9", "#79a3e7"],
+        ["#4702ef", "#9208a6"],
+        ["#9208a6", "#4702ef"],
+        ["#1753ff", "#009dc8"],
+        ["#ae3867", "#7f5b95"],
+        ["#a544ff", "#4f8dce"],
+        ["#bf5df1", "#c12e79"],
+        ["#375dff", "#0197be"],
+      ];
+
+      function rgbToHsl(r, g, b) {
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        let h,
+          s,
+          l = (max + min) / 2;
+
+        if (max === min) {
+          h = s = 0; // achromatic
+        } else {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          switch (max) {
+            case r:
+              h = (g - b) / d + (g < b ? 6 : 0);
+              break;
+            case g:
+              h = (b - r) / d + 2;
+              break;
+            case b:
+              h = (r - g) / d + 4;
+              break;
+          }
+          h /= 6;
+        }
+
+        return [h, s, l];
+      }
+
+      function hslToRgb(h, s, l) {
+        let r, g, b;
+
+        if (s === 0) {
+          r = g = b = l; // achromatic
+        } else {
+          function hue2rgb(p, q, t) {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+          }
+
+          const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+          const p = 2 * l - q;
+          r = hue2rgb(p, q, h + 1 / 3);
+          g = hue2rgb(p, q, h);
+          b = hue2rgb(p, q, h - 1 / 3);
+        }
+
+        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+      }
+
+      function adjustSaturation(imageData, factor) {
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+
+          const [h, s, l] = rgbToHsl(r, g, b);
+          const [newR, newG, newB] = hslToRgb(h, Math.min(1, s * factor), l);
+
+          data[i] = newR;
+          data[i + 1] = newG;
+          data[i + 2] = newB;
+        }
+        return imageData;
+      }
+
+      function removeGreenScreen(imageData) {
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+
+          // If the pixel is green, make it transparent
+          if (g > 100 && r < 100 && b < 100) {
+            data[i + 3] = 0; // Set alpha channel to 0
+          }
+        }
+        return imageData;
+      }
+
+      window.onload = function () {
+        const canvas = document.getElementById("gradientCanvas");
+        const ctx = canvas.getContext("2d");
+        const saturationSlider = document.getElementById("saturationSlider");
+        const saturationValue = document.getElementById("saturationValue");
+        const generateGradientBtn = document.getElementById(
+          "generateGradientBtn"
+        );
+        const generateMountainsBtn = document.getElementById(
+          "generateMountainsBtn"
+        );
+        const downloadLink = document.getElementById("downloadLink");
+
+        let gradientData;
+
+        function generateGradient() {
+          const selectedGradient =
+            gradients[Math.floor(Math.random() * gradients.length)];
+          const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+          gradient.addColorStop(0, selectedGradient[0]);
+          gradient.addColorStop(1, selectedGradient[1]);
+
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          gradientData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          updateCanvas();
+        }
+
+        function drawMountains(imagePath) {
+          const mountainImage = new Image();
+          mountainImage.src = imagePath;
+          mountainImage.onload = function () {
+            // Clear previous mountains by redrawing gradient
+            ctx.putImageData(gradientData, 0, 0);
+
+            // Draw the mountain image offscreen to manipulate pixels
+            const offscreenCanvas = document.createElement("canvas");
+            offscreenCanvas.width = mountainImage.width;
+            offscreenCanvas.height = mountainImage.height;
+            const offscreenCtx = offscreenCanvas.getContext("2d");
+            offscreenCtx.drawImage(mountainImage, 0, 0);
+
+            // Remove green screen from the mountain image
+            let mountainData = offscreenCtx.getImageData(
+              0,
+              0,
+              mountainImage.width,
+              mountainImage.height
+            );
+            mountainData = removeGreenScreen(mountainData);
+            offscreenCtx.putImageData(mountainData, 0, 0);
+
+            // Draw the processed mountain image on the main canvas
+            ctx.drawImage(
+              offscreenCanvas,
+              0,
+              canvas.height - mountainImage.height
+            );
+            updateCanvas();
+          };
+        }
+
+        function generateMountains() {
+          const mountainImages = [
+            "mountains/m1.png",
+            "mountains/m2.png",
+            "mountains/m3.png",
+            "mountains/m4.png",
+            "mountains/m5.png",
+            "mountains/m6.png",
+            "mountains/m7.png",
+            "mountains/m8.png",
+            "mountains/m9.png",
+            "mountains/m10.png",
+            "mountains/m11.png",
+            "mountains/m12.png",
+            "mountains/m13.png",
+            "mountains/m14.png",
+            "mountains/m15.png",
+            "mountains/m16.png",
+            "mountains/m17.png",
+            "mountains/m18.png",
+            "mountains/m19.png",
+            "mountains/m20.png",
+            "mountains/m21.png",
+            "mountains/m22.png",
+            "mountains/m23.png",
+            "mountains/m24.png",
+            "mountains/m25.png",
+            "mountains/m26.png",
+            "mountains/m27.png",
+            "mountains/m28.png",
+            "mountains/m29.png",
+            "mountains/m30.png",
+            "mountains/m31.png",
+            "mountains/m32.png",
+            "mountains/m33.png",
+            "mountains/m34.png",
+            "mountains/m35.png",
+            "mountains/m36.png",
+            "mountains/m37.png",
+            "mountains/m38.png",
+            "mountains/m39.png",
+          ];
+          const selectedMountain =
+            mountainImages[Math.floor(Math.random() * mountainImages.length)];
+          drawMountains(selectedMountain);
+        }
+
+        function updateCanvas() {
+          // Adjust saturation
+          const factor = parseFloat(saturationSlider.value);
+          const imageData = adjustSaturation(
+            ctx.getImageData(0, 0, canvas.width, canvas.height),
+            factor
+          );
+          ctx.putImageData(imageData, 0, 0);
+
+          // Update download link
+          downloadLink.href = canvas.toDataURL("image/png");
+        }
+
+        generateGradientBtn.onclick = generateGradient;
+        generateMountainsBtn.onclick = generateMountains;
+        saturationSlider.oninput = function () {
+          saturationValue.value = saturationSlider.value;
+          updateCanvas();
+        };
+        saturationValue.oninput = function () {
+          saturationSlider.value = saturationValue.value;
+          updateCanvas();
+        };
+
+        generateGradient();
+      };
+    </script>
+  </body>
+</html>
